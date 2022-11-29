@@ -10,20 +10,23 @@ import MapKit
 
 struct LocationMapView: View {
     
-    @State private var region =
-    MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 37.331516, longitude: -121.891054), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
-    // MARK: Span is zoom-in : Bigger it is the more zoom out will be
-    
+    @StateObject private var viewModel = locationMapViewModel()
+        
     var body: some View {
         ZStack{
-           Map(coordinateRegion: $region)
+            Map(coordinateRegion: $viewModel.region)
                 .ignoresSafeArea()
             
             VStack {
                 logoView().shadow(radius: 10)
                 Spacer()
             }
-            
+        }
+        .alert(item: $viewModel.alertItem, content: { alertItem in
+            Alert(title: alertItem.title, message: alertItem.message, dismissButton: alertItem.dismissButton)
+        })
+        .onAppear{
+            viewModel.getLocations()
         }
     }
 }
